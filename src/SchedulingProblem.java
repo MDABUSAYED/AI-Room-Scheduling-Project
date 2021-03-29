@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class SchedulingProblem {
+    
 
   public static final int NUM_TIME_SLOTS = 10;
   public static final double MAX_X_COORD = 10;

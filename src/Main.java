@@ -57,8 +57,9 @@ public class Main {
       System.out.println("EXCEEDED DEADLINE");
     }
     
+    //
     test1.PrintSchedule(solution);
-    
+    //
     double score = test1.evaluateSchedule(solution);
     System.out.println();
     System.out.println("Score: " + score);
