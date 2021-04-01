@@ -35,12 +35,12 @@ public class SchedulingProblem {
       tmp.yCoord = random.nextDouble() * MAX_Y_COORD;
       buildings.add(tmp);
     }
-    /*
+    //
     for(int i = 0; i < buildings.size(); i++) {
         Building b = buildings.get(i);
         System.out.println("Buildings "+ i + " X Y: " + b.xCoord + " " + b.yCoord);
     }
-    */
+    //
     // create random rooms
     for (int i = 0; i < nRooms; i++) {
       Room tmp = new Room();
@@ -48,12 +48,12 @@ public class SchedulingProblem {
       tmp.capacity = ((int)(random.nextDouble() * 70)) + 30;
       rooms.add(tmp);
     }
-    /*
+    //
     for(int i = 0; i < rooms.size(); i++) {
         Room r = rooms.get(i);
         System.out.println("Rooms "+ i + " Building Capacity : " + buildings.indexOf(r.b) + " " + r.capacity);
     }
-    */
+    //
 
     // create random courses
     for (int i = 0; i < nCourses; i++) {
@@ -71,7 +71,7 @@ public class SchedulingProblem {
       }
       courses.add(tmp);
     }
-    /*
+    //
     for(int i = 0; i < courses.size(); i++) {
         Course c = courses.get(i);
         System.out.println("Course "+ i + " Std Number Value PB : " + c.enrolledStudents + " " + c.value + " " + buildings.indexOf(c.preferredLocation));
@@ -79,8 +79,9 @@ public class SchedulingProblem {
         for(int j = 0; j < 10; j++) System.out.print(c.timeSlotValues[j] + " ");
         System.out.println(); 
     }
+    //
     //System.out.println("Courses: " + courses);
-    */
+    //
   }
 
   public Schedule getEmptySchedule() {
@@ -134,7 +135,7 @@ public class SchedulingProblem {
     }
 
     double value = 0d;
-
+    //int count =0;
     for (int i = 0; i < s.length; i++) {
       for (int j = 0; j < s[0].length; j++) {
 
@@ -146,14 +147,17 @@ public class SchedulingProblem {
 
         // course was not assigned to a feasible time slot
         if (c.timeSlotValues[j] <= 0) {
+          //System.out.println(s[i][j]+" s");  
           continue;
         }
 
         // course was assigned to a room that is too small
         if (c.enrolledStudents > r.capacity) {
+          //System.out.println(s[i][j]+" a");  
           continue;
         }
-
+        //count++;
+        //System.out.println("count value time slot : " + count + " "+ c.value + " " + c.timeSlotValues[j]);
         // add in the value for the class
         value += c.value;
         value += c.timeSlotValues[j];
@@ -164,8 +168,10 @@ public class SchedulingProblem {
         double xDist = (b1.xCoord - b2.xCoord) * (b1.xCoord - b2.xCoord);
         double yDist = (b1.yCoord - b2.yCoord) * (b1.yCoord - b2.yCoord);
         double dist = Math.sqrt(xDist + yDist);
-
+        
         value -= DISTANCE_PENALTY * dist;
+        
+        //System.out.println(s[i][j]+" "+(c.value+c.timeSlotValues[j]-DISTANCE_PENALTY * dist));
       }
     }
 
