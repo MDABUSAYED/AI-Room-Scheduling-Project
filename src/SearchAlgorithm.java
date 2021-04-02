@@ -2,15 +2,16 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 class SelectUnassignedCourses {
     
         
   public int course_id;
-  public ArrayList<Room> minimum_remaining_rooms;
+  public HashMap<Integer, Room> minimum_remaining_rooms;
   public int non_zero_time_slot_values;
 
-  public SelectUnassignedCourses(int course_id, ArrayList<Room> minimum_remaining_rooms, int non_zero_time_slot_values) {
+  public SelectUnassignedCourses(int course_id, HashMap<Integer, Room> minimum_remaining_rooms, int non_zero_time_slot_values) {
     this.course_id = course_id;
     this.minimum_remaining_rooms = minimum_remaining_rooms;
     this.non_zero_time_slot_values = non_zero_time_slot_values;
@@ -61,11 +62,13 @@ public class SearchAlgorithm {
       Course c = problem.courses.get(i);
       //int avaiable_rooms = 0;
       int non_zero_time_slot = 0;
-      ArrayList<Room> available_rooms = new ArrayList<Room>();
+      //ArrayList<Room> available_rooms = new ArrayList<Room>();
+      HashMap<Integer, Room> available_rooms = new HashMap<Integer, Room>();
       for (int k = 0; k < problem.rooms.size(); k++) {
         Room r = problem.rooms.get(k);  
         if (c.enrolledStudents <= r.capacity) {
-          available_rooms.add(r);
+          //available_rooms.add(r);
+          available_rooms.put(k, r);
         }
       }
       
@@ -87,19 +90,22 @@ public class SearchAlgorithm {
       Course course = problem.courses.get(c.course_id);
       ArrayList<OrderDomainValues> ordered_time_slot_values = new ArrayList<OrderDomainValues>();
       for (int j = 0; j < course.timeSlotValues.length; j++) { 
-        ordered_time_slot_values.add(new OrderDomainValues(course.timeSlotValues[j], j));
+        if (course.timeSlotValues[j] != 0) ordered_time_slot_values.add(new OrderDomainValues(course.timeSlotValues[j], j));
       }
       Collections.sort(ordered_time_slot_values, OrderDomainValues.cmp1);
       
       //Inference: Try to find preffered room with maximum time slot value, If not possible then try with available one with maximum time slot value
       
-      boolean flag = false;
-      for (int j = 0; j < problem.rooms.size() && !flag; j++) {
-        Room r = problem.rooms.get(j);
-        if (r.b.equals(course.preferredLocation) && r.capacity >= course.enrolledStudents) {
+      boolean flag = false; 
+      //for (int j = 0; j < problem.rooms.size() && !flag; j++) { capitalCities.keySet()
+      for (Integer j :  c.minimum_remaining_rooms.keySet()) {
+        if (flag) break;
+        //Room r = problem.rooms.get(j);
+        Room r = c.minimum_remaining_rooms.get(j);
+        if (r.b.equals(course.preferredLocation)) {
           for (int k = 0;  k < ordered_time_slot_values.size(); k++ ) {
             OrderDomainValues o = ordered_time_slot_values.get(k);
-            if (o.time_slot_value == 0) break;
+            //if (o.time_slot_value == 0) break;
             if (solution.schedule[j][o.index_of_time_slot_value] < 0) {
               solution.schedule[j][o.index_of_time_slot_value] = c.course_id;
               flag = true;
@@ -108,14 +114,16 @@ public class SearchAlgorithm {
           }   
         }
       }
-      // ....
+      // ....Slot then rooms, 
       if (!flag) {
         for (int j = 0; j <  ordered_time_slot_values.size() && !flag; j++) {
           OrderDomainValues o = ordered_time_slot_values.get(j); 
-          if (o.time_slot_value == 0) break;
-          for (int k = 0;  k < problem.rooms.size(); k++ ) {
-            Room r = problem.rooms.get(k); 
-            if (r.capacity < course.enrolledStudents) continue;
+          //if (o.time_slot_value == 0) break;
+          for (Integer k :  c.minimum_remaining_rooms.keySet()) {
+          //for (int k = 0;  k < problem.rooms.size(); k++ ) {
+            //Room r = problem.rooms.get(k); 
+            Room r = c.minimum_remaining_rooms.get(k);
+            //if (r.capacity < course.enrolledStudents) continue;
             if (solution.schedule[k][o.index_of_time_slot_value] < 0 ) {
               solution.schedule[k][o.index_of_time_slot_value] = c.course_id;
               flag = true;
@@ -125,8 +133,8 @@ public class SearchAlgorithm {
         }
       }
       
-      System.out.println(c.course_id);
-      problem.PrintSchedule(solution);
+      //System.out.println(c.course_id);
+      //problem.PrintSchedule(solution);
       
     }
       

@@ -35,12 +35,12 @@ public class SchedulingProblem {
       tmp.yCoord = random.nextDouble() * MAX_Y_COORD;
       buildings.add(tmp);
     }
-    //
+    /*
     for(int i = 0; i < buildings.size(); i++) {
         Building b = buildings.get(i);
         System.out.println("Buildings "+ i + " X Y: " + b.xCoord + " " + b.yCoord);
     }
-    //
+    */
     // create random rooms
     for (int i = 0; i < nRooms; i++) {
       Room tmp = new Room();
@@ -48,12 +48,12 @@ public class SchedulingProblem {
       tmp.capacity = ((int)(random.nextDouble() * 70)) + 30;
       rooms.add(tmp);
     }
-    //
+    /*
     for(int i = 0; i < rooms.size(); i++) {
         Room r = rooms.get(i);
         System.out.println("Rooms "+ i + " Building Capacity : " + buildings.indexOf(r.b) + " " + r.capacity);
     }
-    //
+    */
 
     // create random courses
     for (int i = 0; i < nCourses; i++) {
@@ -71,7 +71,7 @@ public class SchedulingProblem {
       }
       courses.add(tmp);
     }
-    //
+    /*
     for(int i = 0; i < courses.size(); i++) {
         Course c = courses.get(i);
         System.out.println("Course "+ i + " Std Number Value PB : " + c.enrolledStudents + " " + c.value + " " + buildings.indexOf(c.preferredLocation));
@@ -79,7 +79,7 @@ public class SchedulingProblem {
         for(int j = 0; j < 10; j++) System.out.print(c.timeSlotValues[j] + " ");
         System.out.println(); 
     }
-    //
+    */
     //System.out.println("Courses: " + courses);
     //
   }
