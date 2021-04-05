@@ -49,6 +49,9 @@ public class Main {
     else if (algorithm == 1) {
       solution = search.SolveBacktrackingSearch(test1, deadline);
     }
+    else if (algorithm == 2) {
+      solution = search.SolveSimulatedAnnealing(test1, deadline);
+    }
     else {
       System.out.println("ERROR: Given algorithm number does not exist!");
       System.exit(1);
