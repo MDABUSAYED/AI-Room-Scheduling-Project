@@ -149,226 +149,121 @@ public class SearchAlgorithm {
     // get an empty solution to start from
     Schedule current = problem.getEmptySchedule();
     
-    double alpha = 0.9;
-    double T = 1.0;
-    double T_min = 0.00001;
-    double old_cost, best = 0.0;
+    int alpha = 50;
+    
+
+    double old_cost;
     double new_cost, del_e, probability;
-    //while (T > T_min) {
-      //System.out.println(" T : " + T);    
-      int k = 0;
-      while (k <= problem.courses.size()*100) {
-      //while (k <= 300) {
-            
-        System.out.println("Iteration : " + k);  
-        // Calculate Neighbor  
-        int[][] s = current.schedule;
+     
+    int T = problem.courses.size()*alpha;
+    while (T > 0) {
+      
+      int[][] s = current.schedule;
         
-        int[] assigned = new int[problem.courses.size()];
-        ArrayList<Integer> position = new ArrayList<Integer>();
-        int scheduled_course_number = 0;
-        old_cost = problem.evaluateSchedule(current);
-        //System.out.println("Old Cost :" + old_cost);
-        //System.out.println("New Cost :" + new_cost);
-        if (best < old_cost) best = old_cost;
-        
-        for (int i = 0; i < s.length; i++) {
-          for (int j = 0; j < s[0].length; j++) {    
-            if (s[i][j] > -1 && s[i][j] < problem.courses.size()) {
-              assigned[s[i][j]]++;
-              scheduled_course_number++;
-            }
-            if (s[i][j]== -1) {position.add(i); position.add(j); }
-          }   
-        }
-        System.out.println("scheduled_course_number : " + scheduled_course_number);
-        ArrayList<Schedule> neighbor = new ArrayList<Schedule>(); 
-        //System.out.println("NS0 :" + neighbor.size());
-        Random random = new Random();
-        // Not Fully Assigned
-        if (scheduled_course_number != problem.rooms.size() * 10 && scheduled_course_number != problem.courses.size()) {
-          int j = 0;  
-          //System.out.println("yyy");
-          for (int i = 0; i < problem.courses.size(); i++)  {
-            if (j >= position.size()) break;
-            if (assigned[i] == 0) {
-              //System.out.println("yya");
-              int x = position.get(j);
-              int y = position.get(j + 1);
-              j += 2;
-              Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
-              //sc.schedule = current.schedule.clone();
-              for (int a = 0; a < s.length; a++) {
-                  for (int b = 0; b < s[0].length; b++) { 
-                      sc.schedule[a][b] = current.schedule[a][b];
-                  }
-              }
-              sc.schedule[x][y] = i;
-              neighbor.add(sc);
-            }
+      int[] assigned = new int[problem.courses.size()];
+      ArrayList<Integer> position = new ArrayList<Integer>();
+      int scheduled_course_number = 0;
+      old_cost = problem.evaluateSchedule(current);
+      
+      for (int i = 0; i < s.length; i++) {
+        for (int j = 0; j < s[0].length; j++) {    
+          if (s[i][j] > -1 && s[i][j] < problem.courses.size()) {
+            assigned[s[i][j]]++;
+            scheduled_course_number++;
           }
-          //System.out.println("NS1 :" + neighbor.size());
-        }
-        // Fully Assigned Courses, Need to Assign new courses or Swap
-        else {
-          
-          int i = 0;
-          if (scheduled_course_number < problem.courses.size())  {
-            int row1, col1;
-            //System.out.println("yyb");
-            row1 = (int)(random.nextDouble() * problem.rooms.size());
-            col1 = (int)(random.nextDouble() * s[0].length);   
-            while(assigned[i] !=0) i++;
-            Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
-            //sc.schedule = current.schedule.clone();
-            for (int a = 0; a < s.length; a++) {
-              for (int b = 0; b < s[0].length; b++) { 
-                sc.schedule[a][b] = current.schedule[a][b];
-                }
-            }
-            sc.schedule[row1][col1] = i;
-            neighbor.add(sc);
-            
-          }
-          //System.out.println("NS2 :" + neighbor.size());
-          i = 0;
-          while (i < (int)(problem.courses.size() / 2)) {
-            int row1, row2, col1, col2,tmp;
-            row1 = (int)(random.nextDouble() * problem.rooms.size());
-            row2 = (int)(random.nextDouble() * problem.rooms.size());
-            col1 = (int)(random.nextDouble() * s[0].length);  
-            col2 = (int)(random.nextDouble() * s[0].length);
-            Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
-            //sc.schedule = current.schedule.clone();
-            for (int a = 0; a < s.length; a++) {
-              for (int b = 0; b < s[0].length; b++) { 
-                sc.schedule[a][b] = current.schedule[a][b];
-              }
-            }
-            tmp = sc.schedule[row1][col1];
-            sc.schedule[row1][col1] = sc.schedule[row2][col2];
-            sc.schedule[row2][col2] = tmp;
-            neighbor.add(sc);
-            i++;
-          }
-          //System.out.println("NS3 :" + neighbor.size());
-        }
-        
-        int index;
-        index = (int)(random.nextDouble() * neighbor.size());
-        System.out.println(neighbor.size());
-        Schedule next = neighbor.get(index);
-        new_cost = problem.evaluateSchedule(next);
-        System.out.println("Old Cost :" + old_cost);
-        System.out.println("New Cost :" + new_cost);
-        del_e = new_cost - old_cost;
-        
-        if (del_e > 0)  current = next;
-        else {
-          //probability = Math.exp(del_e / T);
-          probability = (1/( 1 + Math.pow(Math.E,(-1*(k - problem.courses.size()*50)))));
-          //System.out.println("yyya");
-          if ((1 - probability) > 0.5) {
-          
-          //if (k < problem.courses.size()*50) {    
-            current = next;
-            System.out.println("yyyb");
-          }
-        }        
-        k++;
+          if (s[i][j]== -1) {position.add(i); position.add(j); }
+        }   
       }
-      //T = T * alpha;
-    //}
-    System.out.println("Best Cost :" + best);
+        
+      ArrayList<Schedule> neighbor = new ArrayList<Schedule>(); 
+       
+      Random random = new Random();
+      // Not Fully Assigned
+      if (scheduled_course_number != problem.rooms.size() * 10 && scheduled_course_number != problem.courses.size()) {
+        int j = 0;  
+        
+        for (int i = 0; i < problem.courses.size(); i++)  {
+          if (j >= position.size()) break;
+          if (assigned[i] == 0) {
+            
+            int x = position.get(j);
+            int y = position.get(j + 1);
+            j += 2;
+            Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
+            
+            for (int a = 0; a < s.length; a++) {
+              for (int b = 0; b < s[0].length; b++) { 
+                sc.schedule[a][b] = current.schedule[a][b];
+              }
+            }
+            sc.schedule[x][y] = i;
+            neighbor.add(sc);
+          }
+        }    
+      }
+      // Fully Assigned Courses, Need to Assign new courses or Swap
+      else {
+          
+        int i = 0;
+        if (scheduled_course_number < problem.courses.size())  {
+          int row1, col1;
+            
+          row1 = (int)(random.nextDouble() * problem.rooms.size());
+          col1 = (int)(random.nextDouble() * s[0].length);   
+          while(assigned[i] !=0) i++;
+          Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
+          for (int a = 0; a < s.length; a++) {
+            for (int b = 0; b < s[0].length; b++) { 
+              sc.schedule[a][b] = current.schedule[a][b];
+            }
+          }
+          sc.schedule[row1][col1] = i;
+          neighbor.add(sc);
+            
+        }
+        
+        i = 0;
+        while (i <= (int)(problem.courses.size() / 5)) {
+          int row1, row2, col1, col2,tmp;
+          row1 = (int)(random.nextDouble() * problem.rooms.size());
+          row2 = (int)(random.nextDouble() * problem.rooms.size());
+          col1 = (int)(random.nextDouble() * s[0].length);  
+          col2 = (int)(random.nextDouble() * s[0].length);
+          Schedule sc = new Schedule(problem.rooms.size(), s[0].length);
+            
+          for (int a = 0; a < s.length; a++) {
+            for (int b = 0; b < s[0].length; b++) { 
+              sc.schedule[a][b] = current.schedule[a][b];
+            }
+          }
+          tmp = sc.schedule[row1][col1];
+          sc.schedule[row1][col1] = sc.schedule[row2][col2];
+          sc.schedule[row2][col2] = tmp;
+          neighbor.add(sc);
+          i++;
+        }
+          
+      }
+        
+      int index;
+      index = (int)(random.nextDouble() * neighbor.size());
+        
+      Schedule next = neighbor.get(index);
+      new_cost = problem.evaluateSchedule(next);
+        
+      del_e = new_cost - old_cost;
+        
+      if (del_e > 0)  current = next;
+      else {
+          probability = (1/( 1 + Math.pow(Math.E,(-1*(T - problem.courses.size()*alpha / 2)))));
+          if (probability > 0.5) {
+            current = next;
+          }
+      }        
+      T--;
+    }
     return current;
   }
-  public Schedule SimulatedAnnealing(SchedulingProblem problem, long deadline) {
-
-		// At first set an empty solution 
-		Schedule currentSolution = problem.getEmptySchedule();
-
-		// Track Best Solution
-
-		// First solution is the naiveBaseline scheduling
-		currentSolution = naiveBaseline(problem, deadline);
-		Schedule bestSolution = currentSolution;
-		double bestEnergy = 0.0;
-		bestEnergy = problem.evaluateSchedule(currentSolution);
-		System.out.println("Best En: "+ bestEnergy);
-
-		// Second solution is no course are scheduled
-		Schedule secondSolution = problem.getEmptySchedule();
-
-		// Starting with a temperature where our main intention is to reduce the temperature with a coolingRate
-		double temp = 100000;
-		double coolingRate = 0.003;
-
-		//The loop will continue until the temperature reduced to below 1
-		while(temp > 1){
-
-			// secondSolution is always an empty solution where no course is scheduled
-			secondSolution = problem.getEmptySchedule();
-
-			// This loop is for every course
-			for(int i = 0; i < problem.courses.size() -1; i++){
-
-				// Get the course to schedule
-				Course courseI = problem.courses.get(i);
-				boolean isScheduled = false;
-
-				// Start scheduling
-				isScheduled = false;
-
-				// This loop is for every timeslots 
-				for (int j = 0; j < courseI.timeSlotValues.length; j++) {
-					if (isScheduled) break;
-					// timeslotvalues means preferred time for a course
-					if (courseI.timeSlotValues[j] > 0) {
-						// looping through all the rooms
-						for (int k = 0; k < problem.rooms.size(); k++) {
-							// randomly pick one room
-							int randRoom = (int)(Math.random()*problem.rooms.size());
-							// randomly pick any timeslot
-							int randSlot = (int)(Math.random()*courseI.timeSlotValues.length);
-							// check if the random room on random time slot is already scheduled or not
-							if (secondSolution.schedule[randRoom][randSlot] < 0) {
-								secondSolution.schedule[randRoom][randSlot] = i;
-								isScheduled = true;
-								break;
-							}//end if
-						}//end for
-					}//end if
-				}//end for
-
-			}//end for (going through all the courses)
-			double currentEnergy = problem.evaluateSchedule(currentSolution);
-			double secondEnergy = problem.evaluateSchedule(secondSolution);
-
-			// 
-			if(probabilityOfAcceptance(currentEnergy, secondEnergy, temp) >=1.0) {
-				currentSolution = secondSolution;
-				currentEnergy = secondEnergy;
-			}
-			else if(probabilityOfAcceptance(currentEnergy, secondEnergy, temp) > Math.random()) {
-				currentSolution = secondSolution;
-				currentEnergy = secondEnergy;
-			}
-
-			if(currentEnergy > bestEnergy) {
-				bestSolution = currentSolution;
-			}
-			temp *= 1-coolingRate;
-		}//end while
-
-		return bestSolution;
-	}//end simulatedAnnealing
-
-
-	public static double probabilityOfAcceptance(double energy, double newEnergy, double temp){
-		if(newEnergy > energy)
-			return 1.0;
-		return Math.exp((newEnergy - energy) / temp); 
-	}//end acceptanceProbability
   public Schedule SolveGeneticAlgorithm(SchedulingProblem problem, long deadline) {
 
     // get an empty solution to start from
