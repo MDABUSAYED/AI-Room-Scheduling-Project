@@ -149,13 +149,35 @@ public class SearchAlgorithm {
     // get an empty solution to start from
     Schedule current = problem.getEmptySchedule();
     
-    int alpha = 50;
+    int alpha = 50, swap_number;
     
-
     double old_cost;
     double new_cost, del_e, probability;
      
     int T = problem.courses.size()*alpha;
+    
+    if (problem.courses.size() < 20) {
+      swap_number = 2;  
+    }
+    else if (problem.courses.size() < 50) {
+      swap_number = 4;  
+    }
+    else if (problem.courses.size() < 100) {
+      swap_number = 6;  
+    }
+    else if (problem.courses.size() < 500) {
+      swap_number = 10;  
+    }
+    else if (problem.courses.size() < 700) {
+      swap_number = 15;  
+    }
+    else if (problem.courses.size() < 1000) {
+      swap_number = 20;  
+    }
+    else {
+      swap_number = 50;  
+    }
+    
     while (T > 0) {
       
       int[][] s = current.schedule;
@@ -223,7 +245,8 @@ public class SearchAlgorithm {
         }
         
         i = 0;
-        while (i <= (int)(problem.courses.size() / 5)) {
+        //while (i <= (int)(problem.courses.size() / 50)) {
+        while (i <= swap_number) {
           int row1, row2, col1, col2,tmp;
           row1 = (int)(random.nextDouble() * problem.rooms.size());
           row2 = (int)(random.nextDouble() * problem.rooms.size());
